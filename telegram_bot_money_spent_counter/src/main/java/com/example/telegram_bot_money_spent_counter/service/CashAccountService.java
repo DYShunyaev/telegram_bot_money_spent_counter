@@ -2,7 +2,6 @@ package com.example.telegram_bot_money_spent_counter.service;
 
 import com.example.telegram_bot_money_spent_counter.model.CashAccount;
 import com.example.telegram_bot_money_spent_counter.model.Currency;
-import com.example.telegram_bot_money_spent_counter.model.Transaction;
 import com.example.telegram_bot_money_spent_counter.repository.CashAccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,15 +55,5 @@ public class CashAccountService {
         if (!cashAccount.getTransactions().isEmpty()) cashAccount.getTransactions()
                 .forEach(transaction -> transactionService.deleteTransactionById(transaction.getTransactionId()));
         cashAccountRepository.deleteById(cashAccount.getCashAccountId());
-    }
-
-    private Long totalMoneySpentCounter(CashAccount cashAccount) {
-        long totalMoneySpent = 0;
-        if (!cashAccount.getTransactions().isEmpty()) {
-            for (Transaction transaction: cashAccount.getTransactions()) {
-                totalMoneySpent += transaction.getPrice();
-            }
-        }
-        return totalMoneySpent;
     }
 }

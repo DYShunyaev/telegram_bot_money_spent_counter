@@ -21,9 +21,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 @Slf4j
 @Component
@@ -98,6 +102,13 @@ public class TelegramBot extends TelegramLongPollingBot {
                 case "/getcurrency" -> sendMessage(chatId, getCurrency());
                 case "/newcashaccount" -> chooseYourCurrency(chatId);
                 case "/getmycashaccounts" -> sendUserCashAccounts(chatId);
+                case "/help" -> {
+                    try {
+                        sendHelpMessage(chatId);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 default -> sendMessage(chatId, "Sorry, command was not recognized.");
             }
         } else if (update.hasCallbackQuery()) {
@@ -384,6 +395,19 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    private void sendHelpMessage(Long chatId) throws IOException {
+        SendMessage message = new SendMessage();
+        message.setChatId(chatId);
+        message.setText(readFile(Paths.get
+                        ("D:/Java/telegram_bot_money_spent_counter/telegram_bot_money_spent_counter/help.txt"))
+                .toString());
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error("Error occurred: " + e.getMessage());
+        }
+    }
+
     private void sendUserCashAccounts(Long chatId) {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
@@ -416,5 +440,15 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             log.error("Error occurred: " + e.getMessage());
         }
+
+    }
+    private StringBuilder readFile(Path pathToFile) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        Scanner scanner = new Scanner(pathToFile);
+        while (scanner.hasNext()) {
+            String row = scanner.nextLine();
+            builder.append(row).append("\n");
+        }
+        return builder;
     }
 }
