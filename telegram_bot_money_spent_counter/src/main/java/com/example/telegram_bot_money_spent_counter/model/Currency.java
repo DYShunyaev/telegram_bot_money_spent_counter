@@ -1,11 +1,11 @@
 package com.example.telegram_bot_money_spent_counter.model;
 
 public enum Currency {
-    RUB("Рубль", "RUB",null),
-    USD("Доллар", "USD",null),
-    EUR("Евро", "EUR",null),
-    TRY("Лира", "TRY",null),
-    CNH("Юань", "CNY",null);
+    RUB("Рубль", "RUB", null),
+    USD("Доллар", "USD", null),
+    EUR("Евро", "EUR", null),
+    TRY("Лира", "TRY", null),
+    CNH("Юань", "CNY", null);
 
     Currency(String currencyName, String abbreviated, Double value) {
         this.currencyName = currencyName;
@@ -36,6 +36,6 @@ public enum Currency {
 
     @Override
     public String toString() {
-        return  currencyName + ", " + abbreviated + ", " + value;
+        return currencyName + ", " + abbreviated + ", " + value;
     }
 }

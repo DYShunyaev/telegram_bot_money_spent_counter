@@ -29,7 +29,7 @@ public class User {
 
     private String userName;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CashAccount> cashAccounts = new ArrayList<>();
 
     private Timestamp registeredAt;

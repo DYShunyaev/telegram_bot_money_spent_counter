@@ -26,8 +26,7 @@ public class BotInitializer {
         selenideConfig.start();
         try {
             telegramBotsApi.registerBot(bot);
-        }
-        catch (TelegramApiException e) {
+        } catch (TelegramApiException e) {
             log.error("Error occurred: " + e.getMessage());
         }
     }

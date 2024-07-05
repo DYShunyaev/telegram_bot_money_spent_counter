@@ -29,20 +29,15 @@ public class UserService {
     }
 
     public void registerUser(Message msg) {
-
         if (userRepository.findById(msg.getChatId()).isEmpty()) {
-
             var chatId = msg.getChatId();
             var chat = msg.getChat();
-
             User user = new User();
-
             user.setChatId(chatId);
             user.setFirstName(chat.getFirstName());
             user.setLastName(chat.getLastName());
             user.setUserName(chat.getUserName());
             user.setRegisteredAt(new Timestamp(System.currentTimeMillis()));
-
             userRepository.save(user);
             log.info("User save: " + user);
         }
@@ -69,7 +64,7 @@ public class UserService {
 
     @Transactional
     List<CashAccount> getCashAccountsByUserChatId(Long chatID) {
-        return  cashAccountService.getCashAccountsBuUserChatId(chatID);
+        return cashAccountService.getCashAccountsBuUserChatId(chatID);
     }
 
     String selectDataUser(long chatId) {
@@ -79,7 +74,7 @@ public class UserService {
     @Transactional
     String createNewCashAccount(long userID, String name, Currency currency) {
         User user = userRepository.findById(userID).orElseThrow();
-        CashAccount cashAccount = new CashAccount(null,currency,new ArrayList<>());
+        CashAccount cashAccount = new CashAccount(null, currency, new ArrayList<>());
         cashAccount.setUser(user);
         user.getCashAccounts().add(cashAccountService.createNewCashAccount(cashAccount));
         updateUser(user);

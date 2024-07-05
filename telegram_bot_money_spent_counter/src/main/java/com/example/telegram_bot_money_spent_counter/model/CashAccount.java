@@ -35,18 +35,10 @@ public class CashAccount {
         this.transactions = transactions;
     }
 
-
-
-
     public String toString() {
-        if (transactions.isEmpty()) return
-                "cashAccountId=" + cashAccountId +
-                ", totalMoneySpent=" + totalMoneySpent +
-                ", currencyAcc=" + currencyAcc;
-        else return
-                "cashAccountId=" + cashAccountId +
-                ", totalMoneySpent=" + totalMoneySpent +
-                ", currencyAcc=" + currencyAcc +
-                ", transactions=" + Arrays.toString(new List[]{transactions});
+        if (transactions.isEmpty())
+            return "cashAccountId=" + cashAccountId + ", totalMoneySpent=" + totalMoneySpent + ", currencyAcc=" + currencyAcc;
+        else
+            return "cashAccountId=" + cashAccountId + ", totalMoneySpent=" + totalMoneySpent + ", currencyAcc=" + currencyAcc + ", transactions=" + Arrays.toString(new List[]{transactions});
     }
 }

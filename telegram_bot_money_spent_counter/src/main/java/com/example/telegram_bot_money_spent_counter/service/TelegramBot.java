@@ -77,12 +77,11 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
             if (messageText.matches("\\D*\\s\\d*\\s\\d{4}-\\d{2}-\\d{2}")
-                    || messageText.matches("\\D*\\s\\D*\\s\\d*\\s\\d{4}-\\d{2}-\\d{2}") ) {
+                    || messageText.matches("\\D*\\s\\D*\\s\\d*\\s\\d{4}-\\d{2}-\\d{2}")) {
                 String[] values = messageText.split("\\s");
                 transaction.setName(values[0]);
                 transaction.setPrice(Double.parseDouble(values[1]));
@@ -121,8 +120,8 @@ public class TelegramBot extends TelegramLongPollingBot {
                 getTransactionsByCashAccountId(chatId, Long.parseLong(callBackData.replaceAll("gettransactionsbycashaccountid ", "")));
             } else if (callBackData.contains("newtransaction")) {
                 chooseYourCategory(chatId, Long.parseLong(callBackData.replaceAll("newtransaction ", "")));
-            }else if (callBackData.contains("transactionsExpenses")) {
-                getTransactionsExpenses(chatId,Long.parseLong(callBackData.replaceAll("transactionsExpenses ", "")));
+            } else if (callBackData.contains("transactionsExpenses")) {
+                getTransactionsExpenses(chatId, Long.parseLong(callBackData.replaceAll("transactionsExpenses ", "")));
             } else if (callBackData.matches("[A-Z]*\\s\\d*")) {
                 Categories categories = Categories.valueOf(callBackData.replaceAll("\\s\\d*", ""));
                 transaction.setCashAccount(cashAccountService.getEntityCashAccountByCashAccountId(Long.parseLong(callBackData.replaceAll("[A-Z]*\s", ""))));
@@ -130,12 +129,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                 addParametersToTransaction(chatId);
             } else if (callBackData.contains("TransactionId-")) {
                 long id = Long.parseLong(callBackData.replaceAll("TransactionId-", ""));
-                getTransactionInfo(chatId,id);
+                getTransactionInfo(chatId, id);
             } else if (callBackData.contains("deleteTransaction")) {
                 long id = Long.parseLong(callBackData.replaceAll("deleteTransaction-", ""));
                 transaction = transactionService.getTransactionById(id);
                 transactionService.deleteTransactionById(id);
-                getTransactionsByCashAccountId(chatId,transaction.getCashAccount().getCashAccountId());
+                getTransactionsByCashAccountId(chatId, transaction.getCashAccount().getCashAccountId());
             }
             switch (callBackData) {
                 case "RUB" -> {
@@ -159,9 +158,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         message.setChatId(chatId);
         Transaction transaction1 = transactionService.getTransactionById(transactionId);
         message.setText(transaction1.toString());
-
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
         var buttonAccount = new InlineKeyboardButton();
@@ -169,17 +166,13 @@ public class TelegramBot extends TelegramLongPollingBot {
         buttonAccount.setCallbackData("gettransactionsbycashaccountid "
                 + transactionService.getCashAccountIdByTransactionId(transactionId));
         buttonList.add(buttonAccount);
-
         var keyboardButton = new InlineKeyboardButton();
-
         keyboardButton.setText("Удалить");
         keyboardButton.setCallbackData("deleteTransaction-" + transactionId);
         buttonList.add(keyboardButton);
         rowsInline.add(buttonList);
-
         markupInLine.setKeyboard(rowsInline);
         message.setReplyMarkup(markupInLine);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -217,11 +210,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Выберете категорию:");
-
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-
         for (Categories categories : Categories.values()) {
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
             var buttonAccount = new InlineKeyboardButton();
@@ -232,7 +222,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
         markupInLine.setKeyboard(rowsInline);
         message.setReplyMarkup(markupInLine);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -244,11 +233,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Транзации по счету " + cashAccountId + ":");
-
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-
         for (Transaction transaction : transactionService.getTransactionsByCashAccountId(cashAccountId)) {
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
             var buttonAccount = new InlineKeyboardButton();
@@ -258,7 +244,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             rowsInline.add(buttonList);
         }
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
-
         var buttonNewTransaction = new InlineKeyboardButton();
         buttonNewTransaction.setText("Создать новую транзакцию");
         buttonNewTransaction.setCallbackData("newtransaction " + cashAccountId);
@@ -270,7 +255,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         rowsInline.add(buttonList);
         markupInLine.setKeyboard(rowsInline);
         message.setReplyMarkup(markupInLine);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -278,11 +262,10 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    private void getTransactionsExpenses (Long chatId, Long cashAccountId) {
+    private void getTransactionsExpenses(Long chatId, Long cashAccountId) {
         SendPhoto message = new SendPhoto();
         message.setChatId(chatId);
         message.setPhoto(transactionService.createExpenseChart(cashAccountId));
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -294,22 +277,16 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(cashAccountService.getCashAccountByCashAccountId(cashAccountId));
-
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
-
         var buttonGetMyAccounts = new InlineKeyboardButton();
         buttonGetMyAccounts.setText("Транзакции по счету");
         buttonGetMyAccounts.setCallbackData("gettransactionsbycashaccountid " + cashAccountId);
         buttonList.add(buttonGetMyAccounts);
-
         rowsInline.add(buttonList);
         markupInLine.setKeyboard(rowsInline);
         message.setReplyMarkup(markupInLine);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -319,27 +296,20 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void startCommandReceived(long chatId, String name) {
-
         log.info("Replied to user " + name);
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(EmojiParser.parseToUnicode("Hi, " + name + ", nice to meet you!" + " :relaxed:"));
-
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
-
         var buttonGetMyAccounts = new InlineKeyboardButton();
         buttonGetMyAccounts.setText("Посмотртеть мои счета");
         buttonGetMyAccounts.setCallbackData("getmycashaccounts");
         buttonList.add(buttonGetMyAccounts);
-
         rowsInline.add(buttonList);
         markupInLine.setKeyboard(rowsInline);
         message.setReplyMarkup(markupInLine);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -362,11 +332,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Выберете валюту, в которой будет вестись счет:");
-
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-
         int count = 0;
         Currency[] currencies = selenideConfig.getCurrency();
         while (count < currencies.length) {
@@ -384,10 +351,8 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
             rowsInline.add(buttonList);
         }
-
         markupInLine.setKeyboard(rowsInline);
         message.setReplyMarkup(markupInLine);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -399,7 +364,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText(readFile(Paths.get
-                        ("D:/Java/telegram_bot_money_spent_counter/telegram_bot_money_spent_counter/help.txt"))
+                ("D:/Java/telegram_bot_money_spent_counter/telegram_bot_money_spent_counter/help.txt"))
                 .toString());
         try {
             execute(message);
@@ -412,11 +377,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         SendMessage message = new SendMessage();
         message.setChatId(chatId);
         message.setText("Выберете Ваш счет:");
-
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
-
         for (CashAccount cashAccount : userService.getCashAccountsByUserChatId(chatId)) {
             List<InlineKeyboardButton> buttonList = new ArrayList<>();
             var buttonAccount = new InlineKeyboardButton();
@@ -426,7 +388,6 @@ public class TelegramBot extends TelegramLongPollingBot {
             rowsInline.add(buttonList);
         }
         List<InlineKeyboardButton> buttonList = new ArrayList<>();
-
         var buttonNewAccount = new InlineKeyboardButton();
         buttonNewAccount.setText("Создать новый счет");
         buttonNewAccount.setCallbackData("newcashaccount");
@@ -434,7 +395,6 @@ public class TelegramBot extends TelegramLongPollingBot {
         rowsInline.add(buttonList);
         markupInLine.setKeyboard(rowsInline);
         message.setReplyMarkup(markupInLine);
-
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -442,6 +402,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
 
     }
+
     private StringBuilder readFile(Path pathToFile) throws IOException {
         StringBuilder builder = new StringBuilder();
         Scanner scanner = new Scanner(pathToFile);

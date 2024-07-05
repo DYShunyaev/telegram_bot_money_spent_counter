@@ -31,10 +31,12 @@ public class TransactionService {
     Transaction getTransactionById(Long id) {
         return transactionRepository.findById(id).orElseThrow();
     }
+
     long getCashAccountIdByTransactionId(Long id) {
         Transaction transaction = transactionRepository.findById(id).orElseThrow();
         return transaction.getCashAccount().getCashAccountId();
     }
+
     List<Transaction> getTransactionsByCashAccountId(Long cashAccountId) {
         return transactionRepository.findByCashAccountCashAccountId(cashAccountId);
     }
@@ -46,11 +48,12 @@ public class TransactionService {
     public InputFile createExpenseChart(Long cashAccountId) {
         DefaultPieDataset<String> dataset = new DefaultPieDataset<String>();
         List<Transaction> transactions = transactionRepository.findByCashAccountCashAccountId(cashAccountId);
-        for (Transaction transaction: transactions) {
-            dataset.setValue(transaction.getName(),transaction.getPrice());
+        for (Transaction transaction : transactions) {
+            dataset.setValue(transaction.getName(), transaction.getPrice());
         }
 
-        JFreeChart chart = ChartFactory.createPieChart("Диаграмма расходов", dataset, true, true, false);
+        JFreeChart chart = ChartFactory.createPieChart("Диаграмма расходов", dataset, true,
+                true, false);
         File chartFile = null;
         try {
             chartFile = new File("expense_chart.png");
@@ -64,7 +67,7 @@ public class TransactionService {
     public Double getTotalMoneySpent(Long cashAccountId) {
         Double totalMoneySpent = 0.0;
         List<Transaction> transactions = transactionRepository.findByCashAccountCashAccountId(cashAccountId);
-        for (Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             totalMoneySpent += transaction.getPrice();
         }
         return totalMoneySpent;
